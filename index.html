@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>נחשון · ביקורים בטכניון</title>
+<style>
+  body{margin:0;font-family:'Assistant',Arial,sans-serif;background:#F4F6F8;color:#14212B}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+  .box{background:#fff;border:1px solid #D8DEE4;border-radius:12px;padding:24px;max-width:420px;text-align:center}
+  .spin{width:28px;height:28px;border:3px solid #D8DEE4;border-top-color:#0B5C78;border-radius:50%;margin:0 auto 12px;animation:s 1s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  button{margin-top:12px;height:40px;padding:0 18px;border:0;border-radius:8px;background:#0B5C78;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="box" id="box"><div class="spin"></div><div>טוען את מערכת הביקורים…</div></div></div>
+<script>
+// דף טעינה: מביא את האפליקציה מ-Apps Script בלי עוגיות של Google,
+// כך שהיא נפתחת גם בדפדפן שמחוברים אליו כמה חשבונות Google.
+var EXEC = 'https://script.google.com/macros/s/AKfycbyN_1VCgbv6cNGxFTvS_1PbK4QRZVY2oOuBx0WPfIhWuEIQMNxG96hRbeKsIeSMgxOl/exec';
+(function () {
+  var q = new URLSearchParams(location.search);
+  var isFaculty = q.get('p') === 'f';
+  var url = EXEC + '?p=bundle&page=' + (isFaculty ? 'f' : 'i') + (isFaculty ? '&t=' + encodeURIComponent(q.get('t') || '') : '');
+  function fail() {
+    document.getElementById('box').innerHTML = '<div>לא הצלחנו לטעון את המערכת. בדקו את החיבור לאינטרנט ונסו שוב.</div><button onclick="location.reload()">ניסיון נוסף</button>';
+  }
+  fetch(url, { credentials: 'omit', redirect: 'follow' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) { if (!d || !d.html) throw new Error('empty'); document.open(); document.write(d.html); document.close(); })
+    .catch(fail);
+})();
+</script>
+</body>
+</html>
